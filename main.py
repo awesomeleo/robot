@@ -33,7 +33,7 @@ else:
     cap = cv2.VideoCapture(0)
 
     while True:
-        t1 = time.clock()
+        start = time.time()
 
         __, img = cap.read()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -49,8 +49,8 @@ else:
             cv2.drawContours(img, [marker.polygon], -1, GREEN, 2)
             cv2.putText(img, marker_id, marker.position, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 
-        t2 = time.clock()
-        fps = 'FPS: ' + str(int(1 / (t2 - t1)))
+        elapsed = time.time() - start
+        fps = 'FPS: ' + str(int(1 / elapsed))
         cv2.putText(img, fps, (10, 20), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 
         cv2.imshow('Main window', img)

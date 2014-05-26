@@ -43,50 +43,71 @@ def oriented_clockwise(polygon):
         return False
 
 
+def parse_marker(marker):
+    marker_data = np.zeros(shape=(3, 3), dtype=np.int)
+
+    for row, j in zip(range(90, 240, 60), range(3)):
+        for col, k in zip(range(90, 240, 60), range(3)):
+            if marker[row, col] == 0:
+                marker_data[j, k] = 0
+            elif marker[row, col] == 255:
+                marker_data[j, k] = 1
+
+    return marker_data
+
+
+def validate_marker(marker):
+    markers = []
+    markers.append([[1, 0, 1], [0, 0, 0], [0, 0, 1]])
+    markers.append([[1, 0, 1], [0, 0, 1], [0, 0, 1]])
+    markers.append([[1, 0, 1], [0, 0, 0], [0, 1, 1]])
+    markers.append([[1, 1, 1], [0, 0, 0], [0, 0, 1]])
+    markers.append([[1, 1, 1], [0, 0, 1], [0, 0, 1]])
+    markers.append([[1, 1, 1], [0, 0, 0], [0, 1, 1]])
+
+    for i, mat in enumerate(markers):
+        for rotations in range(4):
+            if (marker == np.rot90(mat, rotations)).all():
+                return True, i
+
+    return False, None
+
+
 def main_loop(img, gray, contours):
-    for i, contour in enumerate(contours):
+    for i, cont in enumerate(contours):
 
-        if small_area(contour):
+        if small_area(cont):
             continue
 
-        epsilon = 0.05 * cv2.arcLength(contour, closed=True)
-        polygon = cv2.approxPolyDP(contour, epsilon, closed=True)
+        eps = 0.05 * cv2.arcLength(cont, closed=True)
+        poly = cv2.approxPolyDP(cont, eps, closed=True)
 
-        if not_quadrilateral(polygon):
+        if not_quadrilateral(poly):
             continue
 
-        if oriented_clockwise(polygon):
-            transform_mat = np.float32([[0, 0], [WIDTH, 0], [WIDTH, HEIGHT], [0, HEIGHT]])
+        if oriented_clockwise(poly):
+            trans_mat = np.float32([[0, 0], [WIDTH, 0], [WIDTH, HEIGHT], [0, HEIGHT]])
         else:
-            transform_mat = np.float32([[0, 0], [0, HEIGHT], [WIDTH, HEIGHT], [HEIGHT, 0]])
+            trans_mat = np.float32([[0, 0], [0, HEIGHT], [WIDTH, HEIGHT], [HEIGHT, 0]])
 
-        polygon_f = np.float32(polygon)
-        M = cv2.getPerspectiveTransform(polygon_f, transform_mat)
-        square = cv2.warpPerspective(gray, M, (WIDTH, HEIGHT))
-        __, square_bin = cv2.threshold(square, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        poly_fl = np.float32(poly)
+        pers_tr = cv2.getPerspectiveTransform(poly_fl, trans_mat)
+        sq_marker = cv2.warpPerspective(gray, pers_tr, (WIDTH, HEIGHT))
+        __, sq_marker_bin = cv2.threshold(sq_marker, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
-        if no_black_border(square_bin):
+        if no_black_border(sq_marker_bin):
             continue
 
-        bitmap_candidate = np.zeros(shape=(3, 3), dtype=np.int)
+        marker_candidate = parse_marker(sq_marker_bin)
+        valid_marker, marker_id = validate_marker(marker_candidate)
 
-        for row, j in zip(range(90, 240, 60), range(3)):
-            for col, k in zip(range(90, 240, 60), range(3)):
-                if square_bin[row, col] == 0:
-                    bitmap_candidate[j, k] = 0
-                elif square_bin[row, col] == 255:
-                    bitmap_candidate[j, k] = 1
+        if not valid_marker:
+            continue
 
-        cv2.imshow('data {num}'.format(num=i), square_bin)
+        # cv2.imshow('data {num}'.format(num=i), square_bin)
 
-        print bitmap_candidate
+        id_pos = tuple(map(int, poly.min(axis=0)[0]))
+        id_str = "id={id}".format(id=marker_id)
 
-        if (bitmap_candidate == [[1, 1, 1], [0, 0, 1], [0, 0, 1]]).all():
-            marker_id = "id=L-block"
-        else:
-            marker_id = "id={num}".format(num=i)
-
-        id_pos = tuple(map(int, polygon.min(axis=0)[0]))
-
-        cv2.drawContours(img, [polygon], -1, GREEN, 2)
-        cv2.putText(img, marker_id, id_pos, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
+        cv2.drawContours(img, [poly], -1, GREEN, 2)
+        cv2.putText(img, id_str, id_pos, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)

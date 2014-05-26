@@ -74,31 +74,32 @@ def validate_marker(marker):
 
 
 class Marker:
-    def __init__(self, marker, id):
-        self.data = marker
+    def __init__(self, id, contour, polygon):
         self.id = id
+        self.contour = contour
+        self.polygon = polygon
 
 
 def main_loop(img, gray, contours):
     markers = list()
 
-    for i, cont in enumerate(contours):
+    for i, contour in enumerate(contours):
 
-        if small_area(cont):
+        if small_area(contour):
             continue
 
-        eps = 0.05 * cv2.arcLength(cont, closed=True)
-        poly = cv2.approxPolyDP(cont, eps, closed=True)
+        eps = 0.05 * cv2.arcLength(contour, closed=True)
+        polygon = cv2.approxPolyDP(contour, eps, closed=True)
 
-        if not_quadrilateral(poly):
+        if not_quadrilateral(polygon):
             continue
 
-        if oriented_clockwise(poly):
+        if oriented_clockwise(polygon):
             trans_mat = np.float32([[0, 0], [WIDTH, 0], [WIDTH, HEIGHT], [0, HEIGHT]])
         else:
             trans_mat = np.float32([[0, 0], [0, HEIGHT], [WIDTH, HEIGHT], [HEIGHT, 0]])
 
-        poly_fl = np.float32(poly)
+        poly_fl = np.float32(polygon)
         pers_tr = cv2.getPerspectiveTransform(poly_fl, trans_mat)
         sq_marker = cv2.warpPerspective(gray, pers_tr, (WIDTH, HEIGHT))
         __, sq_marker_bin = cv2.threshold(sq_marker, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
@@ -106,18 +107,18 @@ def main_loop(img, gray, contours):
         if no_black_border(sq_marker_bin):
             continue
 
-        marker_candidate = parse_marker(sq_marker_bin)
-        valid_marker, marker_id = validate_marker(marker_candidate)
+        marker = parse_marker(sq_marker_bin)
+        valid_marker, marker_id = validate_marker(marker)
 
         if not valid_marker:
             continue
 
-        markers.append(Marker(marker_candidate, marker_id))
+        markers.append(Marker(marker_id, contour, polygon))
 
-        id_pos = tuple(map(int, poly.min(axis=0)[0]))
+        id_pos = tuple(map(int, polygon.min(axis=0)[0]))
         id_str = "id={id}".format(id=marker_id)
 
-        cv2.drawContours(img, [poly], -1, GREEN, 2)
+        cv2.drawContours(img, [polygon], -1, GREEN, 2)
         cv2.putText(img, id_str, id_pos, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 
     return markers

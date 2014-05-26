@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 
+import time
 import cv2
-
 import vision
 
 BLUE = (255, 50, 50)
 GREEN = (50, 255, 50)
 RED = (50, 50, 255)
 
-STATIC = True
+STATIC = False
 
 if STATIC:
     img = cv2.imread('grids.jpg')
@@ -32,7 +32,9 @@ if STATIC:
 else:
     cap = cv2.VideoCapture(0)
 
-    while 1:
+    while True:
+        t1 = time.clock()
+
         __, img = cap.read()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         gray = cv2.medianBlur(gray, 5)
@@ -46,6 +48,10 @@ else:
             marker_id = "id={id}".format(id=marker.id)
             cv2.drawContours(img, [marker.polygon], -1, GREEN, 2)
             cv2.putText(img, marker_id, marker.position, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
+
+        t2 = time.clock()
+        fps = 'FPS: ' + str(int(1 / (t2 - t1)))
+        cv2.putText(img, fps, (10, 20), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 
         cv2.imshow('Main window', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):

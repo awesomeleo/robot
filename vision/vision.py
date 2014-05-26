@@ -3,9 +3,6 @@
 import cv2
 import numpy as np
 
-BLUE = (255, 50, 50)
-GREEN = (50, 255, 50)
-RED = (50, 50, 255)
 
 SQUARE_PX = 60
 WIDTH = SQUARE_PX * 5
@@ -114,11 +111,5 @@ def main_loop(img, gray, contours):
             continue
 
         markers.append(Marker(marker_id, contour, polygon))
-
-        id_pos = tuple(map(int, polygon.min(axis=0)[0]))
-        id_str = "id={id}".format(id=marker_id)
-
-        cv2.drawContours(img, [polygon], -1, GREEN, 2)
-        cv2.putText(img, id_str, id_pos, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 
     return markers

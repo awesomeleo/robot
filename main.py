@@ -8,7 +8,7 @@ BLUE = (255, 50, 50)
 GREEN = (50, 255, 50)
 RED = (50, 50, 255)
 
-STATIC = False
+STATIC = True
 
 if STATIC:
     img = cv2.imread('grids.jpg')
@@ -19,7 +19,7 @@ if STATIC:
     __, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)
     contours, __ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    markers = vision.main_loop(img, gray, contours)
+    markers = vision.main_loop(gray, contours)
 
     for marker in markers:
         marker_id = "id={id}".format(id=marker.id)
@@ -40,7 +40,7 @@ else:
         __, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)
         contours, __ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        markers = vision.main_loop(img, gray, contours)
+        markers = vision.main_loop(gray, contours)
 
         for marker in markers:
             marker_id = "id={id}".format(id=marker.id)

@@ -86,7 +86,7 @@ class Marker:
         return (cx, cy)
 
 
-def main_loop(img, gray, contours):
+def main_loop(gray, contours):
     markers = list()
 
     for i, contour in enumerate(contours):

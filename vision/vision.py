@@ -57,7 +57,7 @@ def parse_marker(marker):
 
 
 def validate_marker(marker):
-    markers = []
+    markers = list()
     markers.append([[1, 0, 1], [0, 0, 0], [0, 0, 1]])
     markers.append([[1, 0, 1], [0, 0, 1], [0, 0, 1]])
     markers.append([[1, 0, 1], [0, 0, 0], [0, 1, 1]])
@@ -73,7 +73,15 @@ def validate_marker(marker):
     return False, None
 
 
+class Marker:
+    def __init__(self, marker, id):
+        self.data = marker
+        self.id = id
+
+
 def main_loop(img, gray, contours):
+    markers = list()
+
     for i, cont in enumerate(contours):
 
         if small_area(cont):
@@ -104,10 +112,12 @@ def main_loop(img, gray, contours):
         if not valid_marker:
             continue
 
-        # cv2.imshow('data {num}'.format(num=i), square_bin)
+        markers.append(Marker(marker_candidate, marker_id))
 
         id_pos = tuple(map(int, poly.min(axis=0)[0]))
         id_str = "id={id}".format(id=marker_id)
 
         cv2.drawContours(img, [poly], -1, GREEN, 2)
         cv2.putText(img, id_str, id_pos, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
+
+    return markers

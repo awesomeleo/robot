@@ -16,7 +16,7 @@ if STATIC:
     __, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)
     contours, __ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    vision.main_loop(img, gray, contours)
+    markers = vision.main_loop(img, gray, contours)
 
     cv2.imshow('Main window', img)
     cv2.waitKey(0)
@@ -32,7 +32,7 @@ else:
         __, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)
         contours, __ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-        vision.main_loop(img, gray, contours)
+        markers = vision.main_loop(img, gray, contours)
 
         cv2.imshow('Main window', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):

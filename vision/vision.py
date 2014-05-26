@@ -71,8 +71,8 @@ def validate_marker(marker):
 
 
 class Marker:
-    def __init__(self, id, contour, polygon):
-        self.id = id
+    def __init__(self, marker_id, contour, polygon):
+        self.id = marker_id
         self.contour = contour
         self.polygon = polygon
         self.position = self.__pos()

@@ -83,7 +83,7 @@ class Marker:
         moments = cv2.moments(self.contour)
         cx = int(moments['m10']/moments['m00'])
         cy = int(moments['m01']/moments['m00'])
-        return (cx, cy)
+        return cx, cy
 
 
 def main_loop(gray, contours):

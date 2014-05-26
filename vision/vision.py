@@ -7,9 +7,6 @@ BLUE = (255, 50, 50)
 GREEN = (50, 255, 50)
 RED = (50, 50, 255)
 
-MARKER_SIZE = 5 * 5  # num squares
-MARKER_ROI = 3 * 3
-
 SQUARE_SIZE = 60  # pixels
 ROI_WIDTH = SQUARE_SIZE * 5
 ROI_HEIGHT = SQUARE_SIZE * 5

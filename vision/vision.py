@@ -43,8 +43,8 @@ def oriented_clockwise(polygon):
 def parse_marker(marker):
     marker_data = np.zeros(shape=(3, 3), dtype=np.int)
 
-    for row, j in zip(range(90, 240, 60), range(3)):
-        for col, k in zip(range(90, 240, 60), range(3)):
+    for row, j in zip(range(90, 240, SQUARE_PX), range(3)):
+        for col, k in zip(range(90, 240, SQUARE_PX), range(3)):
             if marker[row, col] == 0:
                 marker_data[j, k] = 0
             elif marker[row, col] == 255:
@@ -75,6 +75,15 @@ class Marker:
         self.id = id
         self.contour = contour
         self.polygon = polygon
+        self.position = self.__pos()
+        self.x, self.y = self.position
+        self.direction = None  # TODO
+
+    def __pos(self):
+        moments = cv2.moments(self.contour)
+        cx = int(moments['m10']/moments['m00'])
+        cy = int(moments['m01']/moments['m00'])
+        return (cx, cy)
 
 
 def main_loop(img, gray, contours):
@@ -96,9 +105,9 @@ def main_loop(img, gray, contours):
         else:
             trans_mat = np.float32([[0, 0], [0, HEIGHT], [WIDTH, HEIGHT], [HEIGHT, 0]])
 
-        poly_fl = np.float32(polygon)
-        pers_tr = cv2.getPerspectiveTransform(poly_fl, trans_mat)
-        sq_marker = cv2.warpPerspective(gray, pers_tr, (WIDTH, HEIGHT))
+        polygon_fl = np.float32(polygon)
+        transform = cv2.getPerspectiveTransform(polygon_fl, trans_mat)
+        sq_marker = cv2.warpPerspective(gray, transform, (WIDTH, HEIGHT))
         __, sq_marker_bin = cv2.threshold(sq_marker, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
         if no_black_border(sq_marker_bin):

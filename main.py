@@ -8,7 +8,7 @@ BLUE = (255, 50, 50)
 GREEN = (50, 255, 50)
 RED = (50, 50, 255)
 
-STATIC = True
+STATIC = False
 
 if STATIC:
     img = cv2.imread('grids.jpg')
@@ -22,10 +22,9 @@ if STATIC:
     markers = vision.main_loop(img, gray, contours)
 
     for marker in markers:
-        id_pos = tuple(map(int, marker.polygon.min(axis=0)[0]))
-        id_str = "id={id}".format(id=marker.id)
+        marker_id = "id={id}".format(id=marker.id)
         cv2.drawContours(img, [marker.polygon], -1, GREEN, 2)
-        cv2.putText(img, id_str, id_pos, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
+        cv2.putText(img, marker_id, marker.position, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 
     cv2.imshow('Main window', img)
     cv2.waitKey(0)
@@ -44,10 +43,9 @@ else:
         markers = vision.main_loop(img, gray, contours)
 
         for marker in markers:
-            id_pos = tuple(map(int, marker.polygon.min(axis=0)[0]))
-            id_str = "id={id}".format(id=marker.id)
+            marker_id = "id={id}".format(id=marker.id)
             cv2.drawContours(img, [marker.polygon], -1, GREEN, 2)
-            cv2.putText(img, id_str, id_pos, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
+            cv2.putText(img, marker_id, marker.position, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 
         cv2.imshow('Main window', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):

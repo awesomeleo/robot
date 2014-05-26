@@ -7,9 +7,9 @@ BLUE = (255, 50, 50)
 GREEN = (50, 255, 50)
 RED = (50, 50, 255)
 
-SQUARE_SIZE = 60  # pixels
-ROI_WIDTH = SQUARE_SIZE * 5
-ROI_HEIGHT = SQUARE_SIZE * 5
+SQUARE_PX = 60
+WIDTH = SQUARE_PX * 5
+HEIGHT = SQUARE_PX * 5
 
 
 def small_area(region):
@@ -56,13 +56,13 @@ def main_loop(img, gray, contours):
             continue
 
         if oriented_clockwise(polygon):
-            transform_mat = np.float32([[0, 0], [ROI_WIDTH, 0], [ROI_WIDTH, ROI_HEIGHT], [0, ROI_HEIGHT]])
+            transform_mat = np.float32([[0, 0], [WIDTH, 0], [WIDTH, HEIGHT], [0, HEIGHT]])
         else:
-            transform_mat = np.float32([[0, 0], [0, ROI_HEIGHT], [ROI_WIDTH, ROI_HEIGHT], [ROI_HEIGHT, 0]])
+            transform_mat = np.float32([[0, 0], [0, HEIGHT], [WIDTH, HEIGHT], [HEIGHT, 0]])
 
         polygon_f = np.float32(polygon)
         M = cv2.getPerspectiveTransform(polygon_f, transform_mat)
-        square = cv2.warpPerspective(gray, M, (ROI_WIDTH, ROI_HEIGHT))
+        square = cv2.warpPerspective(gray, M, (WIDTH, HEIGHT))
         __, square_bin = cv2.threshold(square, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
         if no_black_border(square_bin):

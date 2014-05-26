@@ -8,7 +8,7 @@ BLUE = (255, 50, 50)
 GREEN = (50, 255, 50)
 RED = (50, 50, 255)
 
-STATIC = False
+STATIC = True
 
 if STATIC:
     img = cv2.imread('grids.jpg')
@@ -23,7 +23,7 @@ if STATIC:
 
     for marker in markers:
         marker_id = "id={id}".format(id=marker.id)
-        cv2.drawContours(img, [marker.polygon], -1, GREEN, 2)
+        cv2.drawContours(img, [marker.contour], -1, GREEN, 2)
         cv2.putText(img, marker_id, marker.position, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 
     cv2.imshow('Main window', img)
@@ -46,11 +46,11 @@ else:
 
         for marker in markers:
             marker_id = "id={id}".format(id=marker.id)
-            cv2.drawContours(img, [marker.polygon], -1, GREEN, 2)
+            cv2.drawContours(img, [marker.contour], -1, GREEN, 2)
             cv2.putText(img, marker_id, marker.position, fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 
         elapsed = time.time() - start
-        fps = 'FPS: ' + str(int(1 / elapsed))
+        fps = 'FPS: {s}'.format(s=int(1 / elapsed))
         cv2.putText(img, fps, (10, 20), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 
         cv2.imshow('Main window', img)

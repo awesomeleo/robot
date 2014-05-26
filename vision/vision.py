@@ -34,10 +34,7 @@ def oriented_clockwise(polygon):
     x2 = polygon[2][0][0]
     y2 = polygon[2][0][1]
     cross = (x1-x0)*(y2-y0) - (x2-x0)*(y1-y0)
-    if cross > 0:
-        return True
-    else:
-        return False
+    return cross > 0
 
 
 def parse_marker(marker):

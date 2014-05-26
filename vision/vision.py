@@ -15,7 +15,6 @@ ROI_WIDTH = SQUARE_SIZE * 5
 ROI_HEIGHT = SQUARE_SIZE * 5
 
 # clock-wise
-TRANSFORM_MAT = np.float32([[0, 0], [ROI_WIDTH, 0], [ROI_WIDTH, ROI_HEIGHT], [0, ROI_HEIGHT]])
 
 
 def small_area(region):
@@ -47,11 +46,24 @@ def main_loop(img, gray, contours):
         if not_quadrilateral(polygon):
             continue
 
-        # TODO: rotate in the same direction first!
+        x0 = polygon[0][0][0]
+        y0 = polygon[0][0][1]
+        x1 = polygon[1][0][0]
+        y1 = polygon[1][0][1]
+        x2 = polygon[2][0][0]
+        y2 = polygon[2][0][1]
+        cross = (x1-x0)*(y2-y0) - (x2-x0)*(y1-y0)
+        if cross > 0:
+            # clock-wise
+            transform_mat = np.float32([[0, 0], [ROI_WIDTH, 0], [ROI_WIDTH, ROI_HEIGHT], [0, ROI_HEIGHT]])
+        else:
+            # counter clock-wise
+            transform_mat = np.float32([[0, 0], [0, ROI_HEIGHT], [ROI_WIDTH, ROI_HEIGHT], [ROI_HEIGHT, 0]])
+
 
         # perspective transform the polygon
         polygon_f = np.float32(polygon)
-        M = cv2.getPerspectiveTransform(polygon_f, TRANSFORM_MAT)
+        M = cv2.getPerspectiveTransform(polygon_f, transform_mat)
         square = cv2.warpPerspective(gray, M, (ROI_WIDTH, ROI_HEIGHT))
         __, square_bin = cv2.threshold(square, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
 
@@ -67,9 +79,13 @@ def main_loop(img, gray, contours):
                 elif square_bin[row, col] == 255:
                     bitmap_candidate[j, k] = 1
 
-        # cv2.imshow('data {num}'.format(num=i), roi)
+        cv2.imshow('data {num}'.format(num=i), square_bin)
 
-        marker_id = "id={num}".format(num=i)
+        if (bitmap_candidate == [[1, 1, 1], [0, 0, 1], [0, 0, 1]]).all():
+            marker_id = "id=L-block"
+        else:
+            marker_id = "id={num}".format(num=i)
+
         id_pos = tuple(map(int, polygon.min(axis=0)[0]))
 
         cv2.drawContours(img, [polygon], -1, GREEN, 2)

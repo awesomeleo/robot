@@ -51,30 +51,35 @@ def parse_marker(marker):
     marker_data = np.zeros(shape=(3, 3), dtype=np.int)
 
     # perhaps rewrite this to check for avg. color
-    for row, j in zip(range(90, 240, SQUARE_PX), range(3)):
-        for col, k in zip(range(90, 240, SQUARE_PX), range(3)):
+    for i, row in enumerate(range(90, 240, SQUARE_PX)):
+        for j, col in enumerate(range(90, 240, SQUARE_PX)):
             if marker[row, col] == 255:
-                marker_data[j, k] = 1
+                marker_data[i, j] = 1
 
     return marker_data
 
 
 def validate_marker(marker):
-    for i, mat in enumerate(VALID_MARKERS):
-        for rotations in range(4):
-            if (marker == np.rot90(mat, rotations)).all():
-                return True, MARKER_ID[i]
+    for i, valid_marker in enumerate(VALID_MARKERS):
+        for rotations in xrange(4):
+            if (marker == np.rot90(valid_marker, rotations)).all():
+                return True, MARKER_ID[i], rotations
 
-    return False, None
+    return False, None, None
 
 
 class Marker:
-    def __init__(self, marker_id, contour, polygon):
+    def __init__(self, marker_id, contour, polygon, rotations):
         self.id = marker_id
         self.contour = contour
         self.polygon = polygon
+        self.rotations = rotations
+
         self.position = self.__pos()
-        self.x, self.y = self.position
+        self.cx, self.cy = self.position
+        self.x, self.y = self.__corners()
+
+        self.majoraxis = self.__major_axis()
         self.direction = None  # TODO
 
     def __pos(self):
@@ -82,6 +87,35 @@ class Marker:
         cx = int(moments['m10']/moments['m00'])
         cy = int(moments['m01']/moments['m00'])
         return cx, cy
+
+    def __corners(self):
+        x = list()
+        y = list()
+
+        for i in xrange(4):
+            x.append(self.polygon[i][0][0])
+            y.append(self.polygon[i][0][1])
+
+        return x, y
+
+    def __major_axis(self):
+        x, y = None, None
+
+        # can i rewrite this with % operator?
+        if self.rotations == 0:
+            x = self.x[0] + int((self.x[1] - self.x[0]) / 2)
+            y = self.y[0] + int((self.y[1] - self.y[0]) / 2)
+        elif self.rotations == 1:
+            x = self.x[3] + int((self.x[0] - self.x[3]) / 2)
+            y = self.y[3] + int((self.y[0] - self.y[3]) / 2)
+        elif self.rotations == 2:
+            x = self.x[2] + int((self.x[3] - self.x[2]) / 2)
+            y = self.y[2] + int((self.y[3] - self.y[2]) / 2)
+        elif self.rotations == 3:
+            x = self.x[1] + int((self.x[2] - self.x[1]) / 2)
+            y = self.y[1] + int((self.y[2] - self.y[1]) / 2)
+
+        return x, y
 
 
 def main_loop(gray, contours):
@@ -112,11 +146,11 @@ def main_loop(gray, contours):
             continue
 
         marker = parse_marker(sq_marker_bin)
-        valid_marker, marker_id = validate_marker(marker)
+        valid_marker, marker_id, rotations = validate_marker(marker)
 
         if not valid_marker:
             continue
 
-        markers.append(Marker(marker_id, contour, polygon))
+        markers.append(Marker(marker_id, contour, polygon, rotations))
 
     return markers

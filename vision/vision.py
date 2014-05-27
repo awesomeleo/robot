@@ -89,32 +89,16 @@ class Marker:
         return cx, cy
 
     def __corners(self):
-        x = list()
-        y = list()
-
+        x, y = list(), list()
         for i in xrange(4):
             x.append(self.polygon[i][0][0])
             y.append(self.polygon[i][0][1])
-
         return x, y
 
     def __major_axis(self):
-        x, y = None, None
-
-        # can i rewrite this with % operator?
-        if self.rotations == 0:
-            x = self.x[0] + int((self.x[1] - self.x[0]) / 2)
-            y = self.y[0] + int((self.y[1] - self.y[0]) / 2)
-        elif self.rotations == 1:
-            x = self.x[3] + int((self.x[0] - self.x[3]) / 2)
-            y = self.y[3] + int((self.y[0] - self.y[3]) / 2)
-        elif self.rotations == 2:
-            x = self.x[2] + int((self.x[3] - self.x[2]) / 2)
-            y = self.y[2] + int((self.y[3] - self.y[2]) / 2)
-        elif self.rotations == 3:
-            x = self.x[1] + int((self.x[2] - self.x[1]) / 2)
-            y = self.y[1] + int((self.y[2] - self.y[1]) / 2)
-
+        r = self.rotations
+        x = self.x[(4-r) % 4] + int((self.x[(5-r) % 4] - self.x[(4-r) % 4]) / 2)
+        y = self.y[(4-r) % 4] + int((self.y[(5-r) % 4] - self.y[(4-r) % 4]) / 2)
         return x, y
 
 

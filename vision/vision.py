@@ -69,7 +69,7 @@ def validate_marker(marker):
 
 
 class Marker:
-    def __init__(self, marker_id, contour, polygon, rotations):
+    def __init__(self, marker_id, contour, polygon, rotations=0):
         self.id = marker_id
         self.contour = contour
         self.polygon = polygon
@@ -118,7 +118,14 @@ class Marker:
         return x, y
 
 
-def main_loop(gray, contours):
+def main_loop(img):
+
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.medianBlur(gray, 5)
+
+    __, thresh = cv2.threshold(gray, 100, 255, cv2.THRESH_BINARY)
+    contours, __ = cv2.findContours(thresh, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
     markers = list()
 
     for contour in contours:

@@ -8,6 +8,15 @@ SQUARE_PX = 60
 WIDTH = SQUARE_PX * 5
 HEIGHT = SQUARE_PX * 5
 
+VALID_MARKERS = [
+    [[1, 0, 1], [0, 0, 0], [0, 0, 1]],
+    [[1, 0, 1], [0, 0, 1], [0, 0, 1]],
+    [[1, 0, 1], [0, 0, 0], [0, 1, 1]],
+    [[1, 1, 1], [0, 0, 0], [0, 0, 1]],
+    [[1, 1, 1], [0, 0, 1], [0, 0, 1]],
+    [[1, 1, 1], [0, 0, 0], [0, 1, 1]]
+]
+
 
 def small_area(region):
     return cv2.contourArea(region) < 1e2
@@ -51,15 +60,7 @@ def parse_marker(marker):
 
 
 def validate_marker(marker):
-    markers = list()
-    markers.append([[1, 0, 1], [0, 0, 0], [0, 0, 1]])
-    markers.append([[1, 0, 1], [0, 0, 1], [0, 0, 1]])
-    markers.append([[1, 0, 1], [0, 0, 0], [0, 1, 1]])
-    markers.append([[1, 1, 1], [0, 0, 0], [0, 0, 1]])
-    markers.append([[1, 1, 1], [0, 0, 1], [0, 0, 1]])
-    markers.append([[1, 1, 1], [0, 0, 0], [0, 1, 1]])
-
-    for i, mat in enumerate(markers):
+    for i, mat in enumerate(VALID_MARKERS):
         for rotations in range(4):
             if (marker == np.rot90(mat, rotations)).all():
                 return True, i
@@ -86,7 +87,7 @@ class Marker:
 def main_loop(gray, contours):
     markers = list()
 
-    for i, contour in enumerate(contours):
+    for contour in contours:
 
         if small_area(contour):
             continue

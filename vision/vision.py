@@ -3,10 +3,11 @@
 import cv2
 import numpy as np
 
-
 SQUARE_PX = 60
 WIDTH = SQUARE_PX * 5
 HEIGHT = SQUARE_PX * 5
+CLOCKW_TRANSFORM = np.float32([[0, 0], [WIDTH, 0], [WIDTH, HEIGHT], [0, HEIGHT]])
+ACLOCKW_TRANSFORM = np.float32([[0, 0], [0, HEIGHT], [WIDTH, HEIGHT], [WIDTH, 0]])
 
 VALID_MARKERS = [
     [[1, 0, 1], [0, 0, 0], [0, 0, 1]],
@@ -16,6 +17,8 @@ VALID_MARKERS = [
     [[1, 1, 1], [0, 0, 1], [0, 0, 1]],
     [[1, 1, 1], [0, 0, 0], [0, 1, 1]]
 ]
+
+MARKER_ID = [1, 2, 3, 4, 5, 6]
 
 
 def small_area(region):
@@ -62,7 +65,7 @@ def validate_marker(marker):
     for i, mat in enumerate(VALID_MARKERS):
         for rotations in range(4):
             if (marker == np.rot90(mat, rotations)).all():
-                return True, i
+                return True, MARKER_ID[i]
 
     return False, None
 
@@ -98,9 +101,9 @@ def main_loop(gray, contours):
             continue
 
         if oriented_clockwise(polygon):
-            trans_mat = np.float32([[0, 0], [WIDTH, 0], [WIDTH, HEIGHT], [0, HEIGHT]])
+            trans_mat = CLOCKW_TRANSFORM
         else:
-            trans_mat = np.float32([[0, 0], [0, HEIGHT], [WIDTH, HEIGHT], [HEIGHT, 0]])
+            trans_mat = ACLOCKW_TRANSFORM
 
         polygon_fl = np.float32(polygon)
         transform = cv2.getPerspectiveTransform(polygon_fl, trans_mat)

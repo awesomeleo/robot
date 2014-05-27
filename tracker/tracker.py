@@ -102,7 +102,7 @@ class Marker:
         return x, y
 
 
-def main_loop(img):
+def find_markers(img):
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     gray = cv2.medianBlur(gray, 5)

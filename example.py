@@ -8,7 +8,7 @@ BLUE = (255, 50, 50)
 GREEN = (50, 255, 50)
 RED = (50, 50, 255)
 
-STATIC = True
+STATIC = False
 
 if STATIC:
     img = cv2.imread('test.jpg')
@@ -37,7 +37,7 @@ else:
 
         for marker in markers:
             marker_id = "id={id}".format(id=marker.id)
-            cv2.drawContours(img, [marker.contour], -1, GREEN, 2)
+            cv2.drawContours(img, [marker.polygon], -1, GREEN, 2)
             cv2.line(img, marker.position, marker.major_axis, BLUE, 2)
             cv2.putText(img, marker_id, (marker.cx - 25, marker.cy), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
 

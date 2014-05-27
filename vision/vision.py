@@ -79,7 +79,7 @@ class Marker:
         self.cx, self.cy = self.position
         self.x, self.y = self.__corners()
 
-        self.majoraxis = self.__major_axis()
+        self.major_axis = self.__major_axis()
         self.direction = None  # TODO
 
     def __pos(self):

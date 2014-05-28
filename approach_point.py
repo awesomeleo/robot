@@ -14,6 +14,7 @@ WHITE = (255, 255, 255)
 cap = cv2.VideoCapture(0)
 
 target = (200, 200)
+radius = 80
 
 while True:
     start = time.time()
@@ -26,18 +27,9 @@ while True:
         a = np.array(marker.major_axis)
         b = np.array(marker.position)
         c = np.array(target)
-        ba = a - b
-        bc = c - b
-        s = np.arctan2(*ba)
-        if s < 0:
-            s += 2*np.pi
-        e = np.arctan2(*bc)
-        if e < 0:
-            e += 2*np.pi
-        delta = e - s
-        phi = math.floor(np.degrees(delta))
+        phi = marker.angle_to_point(target)
 
-        if math.sqrt((marker.cx - target[0])**2 + (marker.cy - target[1])**2) < 70:
+        if np.linalg.norm(c - b) < radius - np.linalg.norm(b - a):
             contour_color = GREEN
         else:
             contour_color = RED
@@ -50,11 +42,11 @@ while True:
         cv2.drawContours(img, [marker.contour], -1, contour_color, 2)
         cv2.line(img, marker.position, target, deg_color, 2)
         cv2.line(img, marker.position, marker.major_axis, WHITE, 2)
-        cv2.circle(img, target, 80, contour_color, 2)
+        cv2.circle(img, target, radius, contour_color, 2)
         cv2.putText(img, "Angle: {ang}".format(ang=phi), (10, 40), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=deg_color)
 
     else:
-        cv2.circle(img, target, 80, RED, 2)
+        cv2.circle(img, target, radius, RED, 2)
 
     elapsed = time.time() - start
     fps = 'FPS: {T}'.format(T=int(1 / elapsed))

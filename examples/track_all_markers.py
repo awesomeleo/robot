@@ -11,7 +11,7 @@ RED = (50, 50, 255)
 STATIC = True
 
 if STATIC:
-    img = cv2.imread('images/test.jpg')
+    img = cv2.imread('test.jpg')
     img = cv2.resize(img, None, fx=0.3, fy=0.3, interpolation=cv2.INTER_LINEAR)
 
     markers = tracker.find_markers(img)

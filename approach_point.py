@@ -20,7 +20,7 @@ while True:
 
     __, img = cap.read()
 
-    marker = tracker.find_marker_with_id(img, 5)
+    marker = tracker.find_marker_with_id(img, 1)
 
     if marker:
         a = np.array(marker.major_axis)

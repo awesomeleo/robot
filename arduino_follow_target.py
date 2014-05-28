@@ -12,6 +12,12 @@ RED = (50, 50, 255)
 WHITE = (255, 255, 255)
 
 
+def put_text(img, text, pos, color):
+    return cv2.putText(img, text, pos,
+                       fontFace=cv2.FONT_HERSHEY_DUPLEX,
+                       fontScale=0.6, color=color)
+
+
 def main():
     radius = 80
 
@@ -34,7 +40,6 @@ def main():
                 deg_color = GREEN
             else:
                 contour_color = RED
-
                 if abs(phi) < 15:
                     ser.write('w')  # forward
                     deg_color = GREEN
@@ -49,18 +54,12 @@ def main():
             cv2.line(img, robot.position, target.position, deg_color, 2)
             cv2.line(img, robot.position, robot.major_axis, WHITE, 2)
             cv2.circle(img, target.position, radius, contour_color, 2)
-            cv2.putText(img, "Angle: {ang}".format(ang=phi), (10, 40),
-                        fontFace=cv2.FONT_HERSHEY_DUPLEX,
-                        fontScale=0.6, color=deg_color)
-
+            put_text(img, 'Angle: {a}'.format(a=phi), (10, 40), deg_color)
         else:
             ser.write('x')  # stop
 
         elapsed = time.time() - start
-        fps = 'FPS: {T}'.format(T=int(1 / elapsed))
-        cv2.putText(img, fps, (10, 20),
-                    fontFace=cv2.FONT_HERSHEY_DUPLEX,
-                    fontScale=0.6, color=RED)
+        put_text(img, 'FPS: {T}'.format(T=int(1 / elapsed)), (10, 20), RED)
 
         cv2.imshow('Main window', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):

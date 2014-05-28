@@ -13,7 +13,7 @@ WHITE = (255, 255, 255)
 
 cap = cv2.VideoCapture(0)
 
-ser = serial.Serial('/dev/tty.usbmodemfa141', 9600)
+ser = serial.Serial('/dev/tty.usbmodemfd131', 9600)
 time.sleep(2)
 
 
@@ -25,14 +25,14 @@ while True:
 
     __, img = cap.read()
 
-    marker = tracker.find_marker_with_id(img, 1)
+    robot = tracker.find_marker_with_id(img, 1)
     target = tracker.find_marker_with_id(img, 2)
 
-    if marker and target:
-        a = np.array(marker.major_axis)
-        b = np.array(marker.position)
+    if robot and target:
+        a = np.array(robot.major_axis)
+        b = np.array(robot.position)
         c = np.array(target.position)
-        phi = marker.angle_to_point(target.position)
+        phi = robot.angle_to_point(target.position)
 
         if np.linalg.norm(c - b) < radius - np.linalg.norm(b - a):
             contour_color = GREEN
@@ -51,9 +51,9 @@ while True:
                 ser.write('d')
                 deg_color = RED
 
-        cv2.drawContours(img, [marker.contour], -1, contour_color, 2)
-        cv2.line(img, marker.position, target.position, deg_color, 2)
-        cv2.line(img, marker.position, marker.major_axis, WHITE, 2)
+        cv2.drawContours(img, [robot.contour], -1, contour_color, 2)
+        cv2.line(img, robot.position, target.position, deg_color, 2)
+        cv2.line(img, robot.position, robot.major_axis, WHITE, 2)
         cv2.circle(img, target.position, radius, contour_color, 2)
         cv2.putText(img, "Angle: {ang}".format(ang=phi), (10, 40),
                     fontFace=cv2.FONT_HERSHEY_DUPLEX,

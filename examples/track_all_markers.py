@@ -16,8 +16,8 @@ if STATIC:
 
     markers = tracker.find_markers(img)
 
-    for marker in markers:
-        marker_id = "id={id}".format(id=marker.id)
+    for m_id, marker in markers.iteritems():
+        marker_id = 'id={id}'.format(id=marker.id)
         cv2.drawContours(img, [marker.contour], -1, GREEN, 2)
         cv2.line(img, marker.position, marker.major_axis, BLUE, 2)
         cv2.putText(img, marker_id, (marker.cx - 25, marker.cy),
@@ -37,7 +37,7 @@ else:
 
         markers = tracker.find_markers(img)
 
-        for marker in markers:
+        for m_id, marker in markers.iteritems():
             marker_id = "id={id}".format(id=marker.id)
             cv2.drawContours(img, [marker.polygon], -1, GREEN, 2)
             cv2.line(img, marker.position, marker.major_axis, BLUE, 2)

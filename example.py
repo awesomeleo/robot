@@ -20,7 +20,9 @@ if STATIC:
         marker_id = "id={id}".format(id=marker.id)
         cv2.drawContours(img, [marker.contour], -1, GREEN, 2)
         cv2.line(img, marker.position, marker.major_axis, BLUE, 2)
-        cv2.putText(img, marker_id, (marker.cx - 25, marker.cy), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
+        cv2.putText(img, marker_id, (marker.cx - 25, marker.cy),
+                    fontFace=cv2.FONT_HERSHEY_DUPLEX,
+                    fontScale=0.6, color=RED)
 
     cv2.imshow('Main window', img)
     cv2.waitKey(0)
@@ -39,11 +41,15 @@ else:
             marker_id = "id={id}".format(id=marker.id)
             cv2.drawContours(img, [marker.polygon], -1, GREEN, 2)
             cv2.line(img, marker.position, marker.major_axis, BLUE, 2)
-            cv2.putText(img, marker_id, (marker.cx - 25, marker.cy), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
+            cv2.putText(img, marker_id, (marker.cx - 25, marker.cy),
+                        fontFace=cv2.FONT_HERSHEY_DUPLEX,
+                        fontScale=0.6, color=RED)
 
         elapsed = time.time() - start
         fps = 'FPS: {T}'.format(T=int(1 / elapsed))
-        cv2.putText(img, fps, (10, 20), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
+        cv2.putText(img, fps, (10, 20),
+                    fontFace=cv2.FONT_HERSHEY_DUPLEX,
+                    fontScale=0.6, color=RED)
 
         cv2.imshow('Main window', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):

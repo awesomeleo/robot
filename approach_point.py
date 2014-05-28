@@ -42,14 +42,18 @@ while True:
         cv2.line(img, marker.position, target, deg_color, 2)
         cv2.line(img, marker.position, marker.major_axis, WHITE, 2)
         cv2.circle(img, target, radius, contour_color, 2)
-        cv2.putText(img, "Angle: {ang}".format(ang=phi), (10, 40), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=deg_color)
+        cv2.putText(img, "Angle: {ang}".format(ang=phi), (10, 40),
+                    fontFace=cv2.FONT_HERSHEY_DUPLEX,
+                    fontScale=0.6, color=deg_color)
 
     else:
         cv2.circle(img, target, radius, RED, 2)
 
     elapsed = time.time() - start
     fps = 'FPS: {T}'.format(T=int(1 / elapsed))
-    cv2.putText(img, fps, (10, 20), fontFace=cv2.FONT_HERSHEY_DUPLEX, fontScale=0.6, color=RED)
+    cv2.putText(img, fps, (10, 20),
+                fontFace=cv2.FONT_HERSHEY_DUPLEX,
+                fontScale=0.6, color=RED)
 
     cv2.imshow('Main window', img)
     if cv2.waitKey(1) & 0xFF == ord('q'):

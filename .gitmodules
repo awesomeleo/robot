@@ -1,5 +1,5 @@
 [submodule "tracker"]
-	path = tracker
+	path = lib
 	url = git@github.com:antoneri/tracker.git
 [submodule "arduino"]
 	path = arduino

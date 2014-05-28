@@ -3,7 +3,7 @@
 import time
 import cv2
 import numpy as np
-import tracker
+from lib import tracker
 
 BLUE = (255, 50, 50)
 GREEN = (50, 255, 50)

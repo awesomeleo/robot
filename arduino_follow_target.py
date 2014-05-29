@@ -77,7 +77,7 @@ def main():
 if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
 
-    serial_port = '/dev/tty.usbmodemfd131'
+    serial_port = '/dev/tty.usbmodemfa141'
     try:
         ser = serial.Serial(serial_port, 9600)
     except OSError, msg:

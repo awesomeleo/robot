@@ -12,6 +12,11 @@ RED = (50, 50, 255)
 WHITE = (255, 255, 255)
 
 
+class DummyTarget:
+    def __init__(self, position):
+        self.position = position
+
+
 def put_text(img, text, pos, color):
     return cv2.putText(img, text, pos,
                        fontFace=cv2.FONT_HERSHEY_DUPLEX,
@@ -19,6 +24,7 @@ def put_text(img, text, pos, color):
 
 
 def main():
+    target = DummyTarget((300, 250))
     radius = 80
 
     while True:
@@ -27,9 +33,9 @@ def main():
 
         markers = tracker.find_markers(img)
 
-        if 1 and 2 in markers:
+        if 1 in markers:
             robot = markers[1]
-            target = markers[2]
+            #target = markers[2]
             a = np.array(robot.major_axis)
             b = np.array(robot.position)
             c = np.array(target.position)
@@ -54,6 +60,7 @@ def main():
             cv2.drawContours(img, [robot.contour], -1, contour_color, 2)
             cv2.line(img, robot.position, target.position, deg_color, 2)
             cv2.line(img, robot.position, robot.major_axis, WHITE, 2)
+            cv2.line(img, robot.position, robot.minor_axis, WHITE, 2)
             cv2.circle(img, target.position, radius, contour_color, 2)
             put_text(img, 'Angle: {a}'.format(a=phi), (10, 40), deg_color)
         else:

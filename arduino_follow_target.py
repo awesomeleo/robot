@@ -78,7 +78,12 @@ if __name__ == '__main__':
     cap = cv2.VideoCapture(0)
 
     serial_port = '/dev/tty.usbmodemfd131'
-    ser = serial.Serial(serial_port, 9600)
+    try:
+        ser = serial.Serial(serial_port, 9600)
+    except OSError, msg:
+        print msg
+        raise SystemExit(0)
+
     time.sleep(2)
 
     main()

@@ -25,10 +25,11 @@ def main():
         start = time.time()
         __, img = cap.read()
 
-        robot = tracker.find_marker_with_id(img, 1)
-        target = tracker.find_marker_with_id(img, 2)
+        markers = tracker.find_markers(img)
 
-        if robot and target:
+        if 1 and 2 in markers:
+            robot = markers[1]
+            target = markers[2]
             a = np.array(robot.major_axis)
             b = np.array(robot.position)
             c = np.array(target.position)

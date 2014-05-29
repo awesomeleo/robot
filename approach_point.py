@@ -25,9 +25,10 @@ def main():
         start = time.time()
         __, img = cap.read()
 
-        marker = tracker.find_marker_with_id(img, 1)
+        markers = tracker.find_markers(img)
 
-        if marker:
+        if 1 in markers:
+            marker = markers[1]
             a = np.array(marker.major_axis)
             b = np.array(marker.position)
             c = np.array(target)

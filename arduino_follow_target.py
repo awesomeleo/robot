@@ -36,9 +36,9 @@ def main():
         if 1 in markers:
             robot = markers[1]
             #target = markers[2]
-            a = np.array(robot.major_axis)
-            b = np.array(robot.position)
-            c = np.array(target.position)
+            a, b, c = map(np.array, [robot.major_axis,
+                                     robot.position,
+                                     target.position])
             phi = robot.angle_to_point(target.position)
 
             if np.linalg.norm(c - b) < radius - np.linalg.norm(b - a):

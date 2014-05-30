@@ -24,7 +24,7 @@ def put_text(img, text, pos, color):
 
 
 def main():
-    target = DummyTarget((300, 250))
+    target = DummyTarget((320, 240))
     radius = 80
 
     while True:

@@ -62,12 +62,12 @@ def main():
             cv2.line(img, robot.position, robot.major_axis, WHITE, 2)
             cv2.line(img, robot.position, robot.minor_axis, WHITE, 2)
             cv2.circle(img, target.position, radius, contour_color, 2)
-            put_text(img, 'Angle: {a}'.format(a=phi), (10, 40), deg_color)
+            put_text(img, 'Angle: {0}'.format(phi), (10, 40), deg_color)
         else:
             ser.write('x')  # stop
 
         elapsed = time.time() - start
-        put_text(img, 'FPS: {T}'.format(T=int(1 / elapsed)), (10, 20), RED)
+        put_text(img, 'FPS: {0}'.format(int(1 / elapsed)), (10, 20), RED)
 
         cv2.imshow('Main window', img)
         if cv2.waitKey(1) & 0xFF == ord('q'):
